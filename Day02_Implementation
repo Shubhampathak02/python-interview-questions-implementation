@@ -1,0 +1,43 @@
+####Day05_Implementation/solutions.py
+def fibonacci_generator():
+    a, b = 0, 1
+    while True:
+        yield a
+        a, b = b, a + b
+fib = fibonacci_generator()
+for _ in range(10):
+    print(next(fib))
+
+from collections import Counter
+
+data = ['apple', 'banana', 'apple', 'orange', 'banana', 'apple']
+counter = Counter(data)
+
+# Most common 2 items
+print(counter.most_common(2))  # [('apple', 3), ('banana', 2)]
+
+
+original = {'a': 1, 'b': 2, 'c': 3}
+
+# Swap keys and values
+inverted = {v: k for k, v in original.items()}
+print(inverted)  # {1: 'a', 2: 'b', 3: 'c'}
+
+
+def deep_copy(obj):
+    if isinstance(obj, dict):
+        return {deep_copy(k): deep_copy(v) for k, v in obj.items()}
+    elif isinstance(obj, list):
+        return [deep_copy(i) for i in obj]
+    elif isinstance(obj, tuple):
+        return tuple(deep_copy(i) for i in obj)
+    elif isinstance(obj, set):
+        return {deep_copy(i) for i in obj}
+    else:
+        return obj
+
+# Example
+nested = {'x': [1, 2, {'y': 3}], 'z': (4, 5)}
+copy_nested = deep_copy(nested)
+print(copy_nested)
+
