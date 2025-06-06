@@ -1,0 +1,55 @@
+##1. Create and manipulate NumPy arrays: reshape, sum, mean
+
+import numpy as np
+arr = np.arange(1, 13)  # [1, 2, ..., 12]
+
+reshaped = arr.reshape(3, 4)
+
+total_sum = reshaped.sum()
+row_mean = reshaped.mean(axis=1)
+col_sum = reshaped.sum(axis=0)
+
+print("Reshaped:\n", reshaped)
+print("Total Sum:", total_sum)
+print("Row Means:", row_mean)
+print("Column Sums:", col_sum)
+
+2. Load a CSV into a DataFrame, inspect head(), tail(), and info()
+import pandas as pd
+df = pd.read_csv('your_file.csv')
+
+print(df.head())       
+print(df.tail())        
+print(df.info())        
+
+3. Filter rows using Boolean indexing
+
+filtered_df = df[(df['age'] > 30) & (df['gender'] == 'Male')]
+print(filtered_df)
+
+4. Group data by a column and compute multiple aggregations
+
+agg_df = df.groupby('department').agg({
+    'salary': ['mean', 'sum', 'count'],
+    'experience': 'max'
+})
+print(agg_df)
+
+5. Merge two DataFrames on a key with inner and outer joins
+employees = pd.DataFrame({
+    'emp_id': [1, 2, 3],
+    'name': ['Alice', 'Bob', 'Charlie']
+})
+
+salaries = pd.DataFrame({
+    'emp_id': [2, 3, 4],
+    'salary': [70000, 80000, 60000]
+})
+
+
+inner = pd.merge(employees, salaries, on='emp_id', how='inner')
+
+outer = pd.merge(employees, salaries, on='emp_id', how='outer')
+
+print("Inner Join:\n", inner)
+print("Outer Join:\n", outer)
