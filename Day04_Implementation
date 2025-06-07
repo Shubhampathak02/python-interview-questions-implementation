@@ -1,0 +1,69 @@
+1. Work with time-indexed data: resample, interpolate
+
+import pandas as pd
+rng = pd.date_range('2023-01-01', periods=10, freq='D')
+ts = pd.Series(range(10), index=rng)
+ts.iloc[3:5] = None
+
+resampled = ts.resample('2D').mean()
+interpolated = ts.interpolate()
+
+2. Pivot a DataFrame from long to wide and back
+
+df = pd.DataFrame({
+    'id': [1, 1, 2, 2],
+    'feature': ['A', 'B', 'A', 'B'],
+    'value': [10, 20, 30, 40]
+})
+wide = df.pivot(index='id', columns='feature', values='value')
+long = wide.reset_index().melt(id_vars='id', var_name='feature', value_name='value')
+
+
+3. Create and query a multi-index DataFrame
+
+index = pd.MultiIndex.from_tuples([
+    ('2023-01', 'A'), ('2023-01', 'B'),
+    ('2023-02', 'A'), ('2023-02', 'B')
+], names=['month', 'category'])
+df = pd.DataFrame({'sales': [100, 150, 200, 130]}, index=index)
+
+# Query sales in Feb
+df.loc['2023-02']
+
+
+4. Convert columns to categorical and measure memory savings
+
+df = pd.DataFrame({
+    'gender': ['Male', 'Female'] * 1000,
+    'region': ['North', 'South', 'East', 'West'] * 500
+})
+
+before = df.memory_usage(deep=True).sum()
+df['gender'] = df['gender'].astype('category')
+df['region'] = df['region'].astype('category')
+after = df.memory_usage(deep=True).sum()
+
+print(f'Memory saved: {before - after} bytes')
+
+
+5. Read/write Parquet and compare with CSV
+
+import pandas as pd
+import time
+
+df = pd.DataFrame({'a': range(100000), 'b': ['x'] * 100000})
+
+# CSV
+start = time.time()
+df.to_csv('data.csv', index=False)
+read_csv = pd.read_csv('data.csv')
+csv_time = time.time() - start
+
+# Parquet
+start = time.time()
+df.to_parquet('data.parquet', index=False)
+read_parquet = pd.read_parquet('data.parquet')
+parquet_time = time.time() - start
+
+print(f'CSV read/write time: {csv_time:.2f}s')
+print(f'Parquet read/write time: {parquet_time:.2f}s')
