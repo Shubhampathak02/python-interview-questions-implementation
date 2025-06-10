@@ -1,0 +1,44 @@
+import numpy as np
+import pandas as pd
+from scipy import stats
+
+# Example data
+np.random.seed(42)
+group_a = np.random.normal(loc=50, scale=10, size=30)
+group_b = np.random.normal(loc=55, scale=12, size=30)
+group_c = np.random.normal(loc=60, scale=15, size=30)
+
+# 1. One-sample t-test (H0: μ = 50)
+print("1. One-Sample t-test:")
+t_stat, p_val = stats.ttest_1samp(group_a, popmean=50)
+print(f"t = {t_stat:.3f}, p = {p_val:.3f}\n")
+
+# 2. Two-sample t-test (H0: group_a mean = group_b mean)
+print("2. Two-Sample t-test:")
+t_stat2, p_val2 = stats.ttest_ind(group_a, group_b, equal_var=False)
+print(f"t = {t_stat2:.3f}, p = {p_val2:.3f}\n")
+
+# 3. One-way ANOVA (H0: all group means are equal)
+print("3. One-Way ANOVA:")
+f_stat, p_val3 = stats.f_oneway(group_a, group_b, group_c)
+print(f"F = {f_stat:.3f}, p = {p_val3:.3f}\n")
+
+# 4. Chi-square test of independence
+print("4. Chi-Square Test:")
+# Example contingency table
+contingency_table = pd.DataFrame({
+    'Passed': [20, 30],
+    'Failed': [10, 15]
+}, index=['Group A', 'Group B'])
+
+chi2, p_val4, dof, expected = stats.chi2_contingency(contingency_table)
+print(f"Chi² = {chi2:.3f}, p = {p_val4:.3f}, dof = {dof}\n")
+
+# 5. Non-parametric test (Mann–Whitney U)
+print("5. Non-Parametric Test vs Parametric:")
+# Non-parametric
+u_stat, p_val5 = stats.mannwhitneyu(group_a, group_b)
+print(f"Mann-Whitney U = {u_stat:.3f}, p = {p_val5:.3f}")
+# Parametric comparison
+t_stat_comp, p_val_comp = stats.ttest_ind(group_a, group_b, equal_var=False)
+print(f"(For comparison) t = {t_stat_comp:.3f}, p = {p_val_comp:.3f}")
