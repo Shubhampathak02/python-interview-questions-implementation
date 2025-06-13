@@ -1,0 +1,103 @@
+-- 1. Normalize a Denormalized Table into 3NF
+
+-- Original denormalized table
+CREATE TABLE orders_denormalized (
+    order_id INT,
+    customer_name VARCHAR(100),
+    customer_email VARCHAR(100),
+    product_name VARCHAR(100),
+    product_price DECIMAL(10,2)
+);
+
+-- 3NF Normalization:
+
+-- Customers Table
+CREATE TABLE customers (
+    customer_id SERIAL PRIMARY KEY,
+    name VARCHAR(100),
+    email VARCHAR(100) UNIQUE
+);
+
+-- Products Table
+CREATE TABLE products (
+    product_id SERIAL PRIMARY KEY,
+    name VARCHAR(100),
+    price DECIMAL(10,2)
+);
+
+-- Orders Table
+CREATE TABLE orders (
+    order_id INT PRIMARY KEY,
+    customer_id INT REFERENCES customers(customer_id),
+    product_id INT REFERENCES products(product_id)
+);
+
+-- --------------------------------------------
+
+-- 2. Create and Query a Materialized View
+
+CREATE MATERIALIZED VIEW total_sales_per_product AS
+SELECT p.name AS product_name, SUM(o.product_price) AS total_sales
+FROM orders_denormalized o
+GROUP BY p.name;
+
+-- Query the view
+SELECT * FROM total_sales_per_product;
+
+-- Refresh view if data changes
+-- REFRESH MATERIALIZED VIEW total_sales_per_product;
+
+-- --------------------------------------------
+
+-- 3. Write a Stored Procedure for a Common Operation
+
+-- Example: Increase all product prices by a percentage
+CREATE OR REPLACE PROCEDURE increase_price(pct DECIMAL)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    UPDATE products
+    SET price = price * (1 + pct / 100);
+END;
+$$;
+
+-- Call the procedure to increase by 10%
+CALL increase_price(10);
+
+-- --------------------------------------------
+
+-- 4. Analyze EXPLAIN Plan and Add Indexes
+
+-- Example query
+EXPLAIN ANALYZE
+SELECT * FROM orders WHERE customer_id = 1;
+
+-- Add index to improve performance
+CREATE INDEX idx_orders_customer ON orders(customer_id);
+EXPLAIN ANALYZE
+SELECT * FROM orders WHERE customer_id = 1;
+
+-- --------------------------------------------
+
+-- 5. Partition a Table by Range and Query
+
+-- Create partitioned table
+CREATE TABLE sales (
+    sale_id INT,
+    sale_date DATE,
+    amount DECIMAL(10,2)
+) PARTITION BY RANGE (sale_date);
+
+-- Create partitions
+CREATE TABLE sales_2023 PARTITION OF sales
+FOR VALUES FROM ('2023-01-01') TO ('2024-01-01');
+
+CREATE TABLE sales_2024 PARTITION OF sales
+FOR VALUES FROM ('2024-01-01') TO ('2025-01-01');
+
+-- Insert sample data
+INSERT INTO sales VALUES (1, '2023-03-10', 500.00), (2, '2024-04-15', 750.00);
+
+-- Query specific partition automatically handled
+SELECT * FROM sales WHERE sale_date BETWEEN '2023-01-01' AND '2023-12-31';
+
