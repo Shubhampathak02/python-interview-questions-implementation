@@ -1,0 +1,81 @@
+1. Build a Pivot Table Summarizing Sales Data
+Steps:
+
+Select your data range (e.g., A1:D100 with columns: Date, Region, Product, Sales).
+
+Go to Insert > PivotTable → Select new sheet.
+
+In the Pivot Table Field Pane:
+
+Drag Region to Rows
+
+Drag Product to Columns
+
+Drag Sales to Values (default is SUM)
+
+Format numbers and rename the summary fields as needed.
+
+2. Use INDEX–MATCH to Lookup Dynamic Data
+Example:
+
+excel
+Copy
+Edit
+=INDEX(C2:C100, MATCH("North", A2:A100, 0))
+This finds the value in column C where column A equals "North".
+
+C2:C100: Return range
+
+A2:A100: Lookup range
+
+"North": Lookup value (can be replaced with a cell reference)
+
+3. Apply Conditional Formatting Based on Custom Rules
+Example: Highlight sales > 1000 in red:
+
+Select the sales column (e.g., D2:D100)
+
+Go to Home > Conditional Formatting > New Rule
+
+Choose "Use a formula to determine which cells to format"
+
+Enter:
+
+excel
+Copy
+Edit
+=D2>1000
+Set Fill Color to red and click OK
+
+4. Create Interactive Dashboards with Slicers
+Steps:
+
+Create a Pivot Table using your data
+
+Go to PivotTable Analyze > Insert Slicer
+
+Select fields like Region, Product, or Date
+
+Place slicers beside your PivotTable
+
+Optionally, insert Pivot Charts linked to the same data
+
+You now have a simple interactive dashboard with filters!
+
+5. Implement Dynamic Array Formulas for Filtering (Excel 365+)
+Example: Filter high-value sales (>=1000):
+
+excel
+Copy
+Edit
+=FILTER(A2:D100, D2:D100>=1000)
+This returns all rows from A2:D100 where sales (column D) ≥ 1000.
+
+Other useful dynamic array formulas:
+
+=SORT(A2:A100)
+
+=UNIQUE(B2:B100)
+
+=SEQUENCE(10)
+
